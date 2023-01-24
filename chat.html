@@ -2,6 +2,53 @@
 <html>
 <head>
   <title>Chat Room</title>
+  <style>
+    /* Add some basic styling to the page */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Style the chat window and user list */
+    #chat-window, #user-list {
+      background-color: #f2f2f2;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px;
+      overflow-y: scroll;
+    }
+
+    /* Style the login and chat forms */
+    #login-form, #chat-form {
+      background-color: #f2f2f2;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px;
+    }
+
+    /* Style the input fields and buttons */
+    input[type="text"], button {
+      padding: 10px;
+      margin: 5px;
+      border: none;
+      border-radius: 5px;
+    }
+
+    input[type="text"] {
+      width: 75%;
+    }
+
+    /* Style the sent messages */
+    #chat-window p {
+      margin: 5px;
+    }
+
+    /* Style the strong tag inside the sent messages */
+    #chat-window strong {
+      color: blue;
+    }
+  </style>
 </head>
 <body>
 
@@ -45,33 +92,31 @@
     chatWindow.innerHTML += "<p>New user " + currentUser + " has joined the chat</p>";
   }
 
-  function sendMessage() {
-    var message = document.getElementById("chat-input").value;
-    document.getElementById("chat-input").value = "";
+  function
+sendMessage() {
+var message = document.getElementById("chat-input").value;
+document.getElementById("chat-input").value = "";
+var chatWindow = document.getElementById("chat-window");
+chatWindow.innerHTML += "<p><strong>" + currentUser + ":</strong> " + message + "</p>";
+}
 
-    var chatWindow = document.getElementById("chat-window");
-    chatWindow.innerHTML += "<p><strong>" + currentUser + ":</strong> " + message + "</p>";
-  }
+function updateUserList() {
+var userList = document.getElementById("user-list");
+userList.innerHTML = "Connected Users:<br>";
+for (let user of users) {
+userList.innerHTML += user + "<br>";
+}
+}
 
-  function updateUserList() {
-    var userList = document.getElementById("user-list");
-    userList.innerHTML = "Connected Users:<br>";
-    for (let user of users) {
-      userList.innerHTML += user + "<br>";
-    }
-  }
-
-  window.addEventListener("beforeunload", function(e) {
-    if (currentUser) {
-      users.delete(currentUser);
-      updateUserList();
-
-      var chatWindow = document.getElementById("chat-window");
-      chatWindow.innerHTML += "<p>User " + currentUser + " has left the chat</p>";
-    }
-  });
+window.addEventListener("beforeunload", function(e) {
+if (currentUser) {
+users.delete(currentUser);
+updateUserList();
+  var chatWindow = document.getElementById("chat-window");
+  chatWindow.innerHTML += "<p>User " + currentUser + " has left the chat</p>";
+}
+});
 </script>
 
 </body>
 </html>
-
