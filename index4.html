@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat Room</title>
+</head>
+<body>
+
+<div id="chat-window"></div>
+<div id="user-list"></div>
+
+<!-- Login form -->
+<form id="login-form">
+  <label for="username-input">Username:</label>
+  <input type="text" id="username-input" placeholder="Enter your username">
+  <button type="button" onclick="login()">Login</button>
+</form>
+
+<!-- Chat form -->
+<form id="chat-form" style="display:none;">
+  <label for="chat-input">Message:</label>
+  <input type="text" id="chat-input" placeholder="Type your message here...">
+  <button type="button" onclick="sendMessage()">Send</button>
+</form>
+
+<script>
+  var currentUser = null;
+  var users = new Set();
+
+  function login() {
+    var username = document.getElementById("username-input").value;
+    if(!username || users.has(username)) {
+      alert("Please enter a valid username that is not already taken");
+      return;
+    }
+
+    currentUser = username;
+    users.add(username);
+    updateUserList();
+
+    document.getElementById("login-form").style.display = "none";
+    document.getElementById("chat-form").style.display = "block";
+
+    var chatWindow = document.getElementById("chat-window");
+    chatWindow.innerHTML += "<p>Welcome, " + currentUser + "</p>";
+    chatWindow.innerHTML += "<p>New user " + currentUser + " has joined the chat</p>";
+  }
+
+  function sendMessage() {
+    var message = document.getElementById("chat-input").value;
+    document.getElementById("chat-input").value = "";
+
+    var chatWindow = document.getElementById("chat-window");
+    chatWindow.innerHTML += "<p><strong>" + currentUser + ":</strong> " + message + "</p>";
+  }
+
+  function updateUserList() {
+    var userList = document.getElementById("user-list");
+    userList.innerHTML = "Connected Users:<br>";
+    for (let user of users) {
+      userList.innerHTML += user + "<br>";
+    }
+  }
+
+  window.addEventListener("beforeunload", function(e) {
+    if (currentUser) {
+      users.delete(currentUser);
+      updateUserList();
+
+      var chatWindow = document.getElementById("chat-window");
+      chatWindow.innerHTML += "<p>User " + currentUser + " has left the chat</p>";
+    }
+  });
+</script>
+
+</body>
+</html>
+
