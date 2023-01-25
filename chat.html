@@ -3,46 +3,86 @@
 <head>
   <title>Chat Room</title>
   <style>
+    /* Style the body */
+    body {
+      display: grid;
+      grid-template-rows: 1fr 1fr 1fr;
+    }
+
     /* Style the chat container */
     .chat-container {
       display: flex;
       flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
     }
+
     /* Style the chat window */
     #chat-window {
-      flex: 0 0 70%;
-      height: 70vh;
-      overflow-y: scroll;
-      margin-bottom: 20px;
-      padding: 20px;
+      flex: 1;
+      order: 1;
     }
+
     /* Style the user list */
     #user-list {
       flex: 0 0 30%;
+      order: 2;
       height: 70vh;
       overflow-y: scroll;
       margin-bottom: 20px;
       padding: 20px;
     }
+
     /* Style the login and chat forms */
     #login-form, #chat-form {
+      flex: 1;
+      order: 3;
       background-color: #f2f2f2;
       border: 1px solid #ccc;
       padding: 10px;
-      text-align: center;
     }
+
     /* Style the input fields and buttons */
     input[type="text"], button {
       margin: 10px;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 4px;
-      background-color: #f4511e;
-      color: #fff;
-      cursor: pointer;
-      width: 100%;
+      padding: 10px;
+      font-size: 1.2em;
+      width: 90%;
     }
-  </style>
+
+    /* Style the chat messages */
+    #chat-window p {
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 1.2em;
+      background-color: #f2f2f2;
+      border: 1px solid #ccc;
+    }
+
+    /* Style the username in the chat messages */
+    #chat-window p strong {
+      font-weight: bold;
+    }
+    /* Random Hex Color generator */
+    #chat-window p, #login-form, #chat-form, button, input {
+      animation: colorchange 8s infinite;
+    }
+
+    @keyframes colorchange {
+    0% {color: #000000;}
+    10% {color: #f44336;}
+    20% {color: #9c27b0;}
+    30% {color: #3f51b5;}
+    40% {color: #03a9f4;}
+    50% {color: #009688;}
+    60% {color: #8bc34a;}
+    70% {color: #ffeb3b;}
+80% {color: #ffc107;}
+90% {color: #ff9800;}
+100% {color: #ff5722;}
+}
+</style>
+
 </head>
 <body>
   <div class="chat-container">
@@ -62,88 +102,62 @@
   <script>
     var currentUser = null;
     var users = new Set();
-    var spamCheck = false;
+    var spamCheck = false;function login() {
+  var username = document.getElementById("username-input").value;
+  if(!username || users.has(username)) {
+    alert("Please enter a valid username that is not already taken");
+    return;
+  }
 
-    function login() {
-      var username = document.getElementById("username-input").value;
-      if(!username || users.has(username)) {
-        alert("Please enter a valid username that is not already taken");
-        return;
-      }
+  currentUser = username;
+  users.add(username);
+  updateUserList();
 
-      currentUser = username;
-      users.add(username);
-      updateUserList();
+  document.getElementById("login-form").style.display = "none";
+  document.getElementById("chat-form").style.display = "block";
 
-      document.getElementById("login-form").style.display = "none";
-      document.getElementById("chat-form").style.display = "block";
-
-      var chatWindow = document.getElementById("chat-window");
-      chatWindow.innerHTML += "<p>Welcome, " + currentUser + "</p>";
-      chatWindow.innerHTML += "<p>New user " + currentUser + " has joined the chat</p>";
-    }
+  var chatWindow = document.getElementById("chat-window");
+  chatWindow.innerHTML += "<p>Welcome, " + currentUser + "</p>";
+  chatWindow.innerHTML += "<p>New user " + currentUser + " has joined the chat</p>";
+}
 
 function sendMessage() {
-var message = document.getElementById("chat-input").value;
-document.getElementById("chat-input").value = "";
-if (!spamCheck) {
-var chatWindow = document.getElementById("chat-window");
-chatWindow.innerHTML += "<p><strong>" + currentUser + ":</strong> " + message + "</p>";
-spamCheck = true;
-setTimeout(function(){spamCheck = false;}, 3000);
+  if(!spamCheck) {
+    var message = document.getElementById("chat-input").value;
+    document.getElementById("chat-input").value = "";
+    spamCheck = true;
+    setTimeout(function(){ spamCheck = false; }, 2000);
+    var chatWindow = document.getElementById("chat-window");
+    chatWindow.innerHTML += "<p><strong>" + currentUser + ":</strong> " + message + "</p>";
+} else {
+alert("Please do not spam the chat!");
 }
-}    function sendMessage() {
-      var message = document.getElementById("chat-input").value;
-      document.getElementById("chat-input").value = "";
-      if (!spamCheck) {
-        var chatWindow = document.getElementById("chat-window");
-        chatWindow.innerHTML += "<p><strong>" + currentUser + ":</strong> " + message + "</p>";
-        spamCheck = true;
-        setTimeout(function(){spamCheck = false;}, 1000);
-      }
-    }
+}
 
-    function updateUserList() {
-      var userList = document.getElementById("user-list");
-      userList.innerHTML = "Connected Users:<br>";
-      for (let user of users) {
-        userList.innerHTML += user + "<br>";
-      }
-    }
+function updateUserList() {
+var userList = document.getElementById("user-list");
+userList.innerHTML = "Connected Users:<br>";
+for (let user of users) {
+userList.innerHTML += user + "<br>";
+}
+}
 
-    window.addEventListener("beforeunload", function(e) {
-      if (currentUser) {
-        users.delete(currentUser);
-        updateUserList();
+window.addEventListener("beforeunload", function(e) {
+if (currentUser) {
+users.delete(currentUser);
+updateUserList();var chatWindow = document.getElementById("chat-window");
+chatWindow.innerHTML += "<p>User " + currentUser + " has left the chat</p>";
+}
+});
 
-        var chatWindow = document.getElementById("chat-window");
-        chatWindow.innerHTML += "<p>User " + currentUser + " has left the chat</p>";
-      }
-    });
+//Change text color every 3 seconds
+setInterval(function(){
+var elements = document.getElementsByTagName("*");
+for (var i = 0; i < elements.length; i++) {
+elements[i].style.animation = "colorchange 5s infinite";
+}
+}, 3000);
+</script>
 
-    // Function to generate a random hex color code
-    function getRandomColor() {
-      var letters = '0123456789ABCDEF';
-      var color = '#';
-      for (var i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-      }
-      return color;
-    }
-
-    // Function to change the color of the text on the website
-    function changeColor() {
-      var elements = document.getElementsByTagName("*");
-      for (var i = 0; i < elements.length; i++) {
-        elements[i].style.color = getRandomColor();
-      }
-    }
-
-    // Change the text color every 3 seconds
-    setInterval(changeColor, 3000);
-
-    // Set the background color
-    document.body.style.backgroundColor = "black";
-  </script>
 </body>
 </html>
