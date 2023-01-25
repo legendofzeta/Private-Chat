@@ -3,90 +3,74 @@
 <head>
   <title>Chat Room</title>
   <style>
-    /* Style the body */
-body {
-  background-color: #000000;
-}
-
-    body {
-      display: grid;
-      grid-template-rows: 1fr 1fr 1fr;
-    }
-
-    /* Style the chat container */
+ /* Style the chat container */
     .chat-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      align-items: center;
     }
-
     /* Style the chat window */
     #chat-window {
-      flex: 1;
-      order: 1;
-    }
-
-    /* Style the user list */
-    #user-list {
-      flex: 0 0 30%;
-      order: 2;
-      height: 70vh;
+      flex: 0 0 70%;
+      height: 60vh;
       overflow-y: scroll;
       margin-bottom: 20px;
       padding: 20px;
+      text-align: center;
+      animation: colorchange 3s infinite;
     }
-
+    /* Style the user list */
+    #user-list {
+      flex: 0 0 20%;
+      height: 60vh;
+      overflow-y: scroll;
+      margin-bottom: 20px;
+      padding: 20px;
+      text-align: center;
+    }
     /* Style the login and chat forms */
     #login-form, #chat-form {
-      flex: 1;
-      order: 3;
+      flex: 0 0 100%;
       background-color: #f2f2f2;
       border: 1px solid #ccc;
       padding: 10px;
+      text-align: center;
     }
-
     /* Style the input fields and buttons */
     input[type="text"], button {
       margin: 10px;
       padding: 10px;
-      font-size: 1.2em;
-      width: 90%;
+      font-size: 14px;
     }
-
-    /* Style the chat messages */
-    #chat-window p {
-      margin: 10px 0;
-      padding: 10px;
-      font-size: 1.2em;
-      background-color: #f2f2f2;
-      border: 1px solid #ccc;
+    /* Add a Monero address section */
+    .monero-address {
+      flex: 0 0 100%;
+      margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
     }
-
-    /* Style the username in the chat messages */
-    #chat-window p strong {
-      font-weight: bold;
+    /* Add a disclaimer section */
+    .disclaimer {
+      flex: 0 0 100%;
+      margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
     }
-    /* Random Hex Color generator */
-    #chat-window p, #login-form, #chat-form, button, input {
-      animation: colorchange 8s infinite;
-    }
-
+    /* Add animation for text color change */
     @keyframes colorchange {
-    0% {color: #000000;}
-    10% {color: #f44336;}
-    20% {color: #9c27b0;}
-    30% {color: #3f51b5;}
-    40% {color: #03a9f4;}
-    50% {color: #009688;}
-    60% {color: #8bc34a;}
-    70% {color: #ffeb3b;}
-80% {color: #ffc107;}
-90% {color: #ff9800;}
-100% {color: #ff5722;}
-}
-</style>
-
+      0% {color: #000000;}
+      10% {color: #f44336;}
+      20% {color: #9c27b0;}
+      30% {color: #3f51b5;}
+      40% {color: #03a9f4;}
+      50% {color: #009688;}
+      60% {color: #8bc34a;}
+      70% {color: #ffc107;}
+      80% {color: #ff9800;}
+      90% {color: #ff5722;}
+      100% {color: #ff5722;}
+    }
+  </style>
 </head>
 <body>
   <div class="chat-container">
@@ -100,9 +84,17 @@ body {
   </form>
   <form id="chat-form" style="display:none;">
     <label for="chat-input">Message:</label>
-    <input type="text" id="chat-input" placeholder="Type your message here...">
-    <button type="button" onclick="sendMessage()">Send</button>
+    <input type="text" id="chat-input" placeholder="Type your messagehere...">
+<button type="button" onclick="sendMessage()">Send</button>
+
   </form>
+  <div class="monero-address">
+    Monero Address: <br>
+    <span id="monero-address">Donate to support our mission of free speech and privacy</span>
+  </div>
+  <div class="disclaimer">
+    Disclaimer: This chat website was created to promote freedom of speech and privacy. We do not endorse any illegal or harmful activities.
+  </div>
   <script>
     var currentUser = null;
     var users = new Set();
@@ -133,35 +125,28 @@ function sendMessage() {
     setTimeout(function(){ spamCheck = false; }, 2000);
     var chatWindow = document.getElementById("chat-window");
     chatWindow.innerHTML += "<p><strong>" + currentUser + ":</strong> " + message + "</p>";
-} else {
-alert("Please do not spam the chat!");
-}
+  } else {
+    alert("Please wait before sending another message.");
+  }
 }
 
 function updateUserList() {
-var userList = document.getElementById("user-list");
-userList.innerHTML = "Connected Users:<br>";
-for (let user of users) {
-userList.innerHTML += user + "<br>";
-}
+  var userList = document.getElementById("user-list");
+  userList.innerHTML = "Connected Users:<br>";
+  for (let user of users) {
+    userList.innerHTML += user + "<br>";
+  }
 }
 
 window.addEventListener("beforeunload", function(e) {
-if (currentUser) {
-users.delete(currentUser);
-updateUserList();var chatWindow = document.getElementById("chat-window");
-chatWindow.innerHTML += "<p>User " + currentUser + " has left the chat</p>";
-}
+  if (currentUser) {
+    users.delete(currentUser);
+    updateUserList();
+
+    var chatWindow = document.getElementById("chat-window");
+    chatWindow.innerHTML += "<p>User " + currentUser + " has left the chat</p>";
+  }
 });
-
-//Change text color every 3 seconds
-setInterval(function(){
-var elements = document.getElementsByTagName("*");
-for (var i = 0; i < elements.length; i++) {
-elements[i].style.animation = "colorchange 5s infinite";
-}
-}, 3000);
-</script>
-
+  </script>
 </body>
 </html>
