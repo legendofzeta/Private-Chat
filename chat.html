@@ -3,120 +3,147 @@
 <head>
   <title>Chat Room</title>
   <style>
-    /* Add some basic styling to the page */
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
+    /* Style the chat container */
+    .chat-container {
+      display: flex;
+      flex-wrap: wrap;
     }
-
-    /* Style the chat window and user list */
-    #chat-window, #user-list {
-      background-color: #f2f2f2;
-      border: 1px solid #ccc;
-      padding: 10px;
-      margin: 10px;
+    /* Style the chat window */
+    #chat-window {
+      flex: 0 0 70%;
+      height: 70vh;
       overflow-y: scroll;
+      margin-bottom: 20px;
+      padding: 20px;
     }
-
+    /* Style the user list */
+    #user-list {
+      flex: 0 0 30%;
+      height: 70vh;
+      overflow-y: scroll;
+      margin-bottom: 20px;
+      padding: 20px;
+    }
     /* Style the login and chat forms */
     #login-form, #chat-form {
       background-color: #f2f2f2;
       border: 1px solid #ccc;
       padding: 10px;
-      margin: 10px;
+      text-align: center;
     }
-
     /* Style the input fields and buttons */
     input[type="text"], button {
-      padding: 10px;
-      margin: 5px;
+      margin: 10px;
+      padding: 12px 20px;
       border: none;
-      border-radius: 5px;
-    }
-
-    input[type="text"] {
-      width: 75%;
-    }
-
-    /* Style the sent messages */
-    #chat-window p {
-      margin: 5px;
-    }
-
-    /* Style the strong tag inside the sent messages */
-    #chat-window strong {
-      color: blue;
+      border-radius: 4px;
+      background-color: #f4511e;
+      color: #fff;
+      cursor: pointer;
+      width: 100%;
     }
   </style>
 </head>
 <body>
+  <div class="chat-container">
+    <div id="chat-window"></div>
+    <div id="user-list"></div>
+  </div>
+  <form id="login-form">
+    <label for="username-input">Username:</label>
+    <input type="text" id="username-input" placeholder="Enter your username">
+    <button type="button" onclick="login()">Login</button>
+  </form>
+  <form id="chat-form" style="display:none;">
+    <label for="chat-input">Message:</label>
+    <input type="text" id="chat-input" placeholder="Type your message here...">
+    <button type="button" onclick="sendMessage()">Send</button>
+  </form>
+  <script>
+    var currentUser = null;
+    var users = new Set();
+    var spamCheck = false;
 
-<div id="chat-window"></div>
-<div id="user-list"></div>
+    function login() {
+      var username = document.getElementById("username-input").value;
+      if(!username || users.has(username)) {
+        alert("Please enter a valid username that is not already taken");
+        return;
+      }
 
-<!-- Login form -->
-<form id="login-form">
-  <label for="username-input">Username:</label>
-  <input type="text" id="username-input" placeholder="Enter your username">
-  <button type="button" onclick="login()">Login</button>
-</form>
+      currentUser = username;
+      users.add(username);
+      updateUserList();
 
-<!-- Chat form -->
-<form id="chat-form" style="display:none;">
-  <label for="chat-input">Message:</label>
-  <input type="text" id="chat-input" placeholder="Type your message here...">
-  <button type="button" onclick="sendMessage()">Send</button>
-</form>
+      document.getElementById("login-form").style.display = "none";
+      document.getElementById("chat-form").style.display = "block";
 
-<script>
-  var currentUser = null;
-  var users = new Set();
-
-  function login() {
-    var username = document.getElementById("username-input").value;
-    if(!username || users.has(username)) {
-      alert("Please enter a valid username that is not already taken");
-      return;
+      var chatWindow = document.getElementById("chat-window");
+      chatWindow.innerHTML += "<p>Welcome, " + currentUser + "</p>";
+      chatWindow.innerHTML += "<p>New user " + currentUser + " has joined the chat</p>";
     }
 
-    currentUser = username;
-    users.add(username);
-    updateUserList();
-
-    document.getElementById("login-form").style.display = "none";
-    document.getElementById("chat-form").style.display = "block";
-
-    var chatWindow = document.getElementById("chat-window");
-    chatWindow.innerHTML += "<p>Welcome, " + currentUser + "</p>";
-    chatWindow.innerHTML += "<p>New user " + currentUser + " has joined the chat</p>";
-  }
-
-  function
-sendMessage() {
+function sendMessage() {
 var message = document.getElementById("chat-input").value;
 document.getElementById("chat-input").value = "";
+if (!spamCheck) {
 var chatWindow = document.getElementById("chat-window");
 chatWindow.innerHTML += "<p><strong>" + currentUser + ":</strong> " + message + "</p>";
+spamCheck = true;
+setTimeout(function(){spamCheck = false;}, 3000);
 }
+}    function sendMessage() {
+      var message = document.getElementById("chat-input").value;
+      document.getElementById("chat-input").value = "";
+      if (!spamCheck) {
+        var chatWindow = document.getElementById("chat-window");
+        chatWindow.innerHTML += "<p><strong>" + currentUser + ":</strong> " + message + "</p>";
+        spamCheck = true;
+        setTimeout(function(){spamCheck = false;}, 1000);
+      }
+    }
 
-function updateUserList() {
-var userList = document.getElementById("user-list");
-userList.innerHTML = "Connected Users:<br>";
-for (let user of users) {
-userList.innerHTML += user + "<br>";
-}
-}
+    function updateUserList() {
+      var userList = document.getElementById("user-list");
+      userList.innerHTML = "Connected Users:<br>";
+      for (let user of users) {
+        userList.innerHTML += user + "<br>";
+      }
+    }
 
-window.addEventListener("beforeunload", function(e) {
-if (currentUser) {
-users.delete(currentUser);
-updateUserList();
-  var chatWindow = document.getElementById("chat-window");
-  chatWindow.innerHTML += "<p>User " + currentUser + " has left the chat</p>";
-}
-});
-</script>
+    window.addEventListener("beforeunload", function(e) {
+      if (currentUser) {
+        users.delete(currentUser);
+        updateUserList();
 
+        var chatWindow = document.getElementById("chat-window");
+        chatWindow.innerHTML += "<p>User " + currentUser + " has left the chat</p>";
+      }
+    });
+
+    // Function to generate a random hex color code
+    function getRandomColor() {
+      var letters = '0123456789ABCDEF';
+      var color = '#';
+      for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    // Function to change the color of the text on the website
+    function changeColor() {
+      var elements = document.getElementsByTagName("*");
+      for (var i = 0; i < elements.length; i++) {
+        elements[i].style.color = getRandomColor();
+      }
+    }
+
+    // Change the text color every 3 seconds
+    setInterval(changeColor, 3000);
+
+    // Set the background color
+    document.body.style.backgroundColor = "black";
+  </script>
 </body>
 </html>
